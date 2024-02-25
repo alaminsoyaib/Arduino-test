@@ -1,0 +1,48 @@
+{
+  "configurations": [
+    {
+      "name": "Arduino Uno",
+      "includePath": [
+        "D:/ProgramFiles/Arduino/hardware/arduino/avr/cores/arduino",
+        "D:/ProgramFiles/Arduino/hardware/arduino/avr/variants/standard",
+        "${workspaceFolder}/**"
+      ],
+      "forcedInclude": [
+        "D:/ProgramFiles/Arduino/hardware/arduino/avr/cores/arduino/Arduino.h"
+      ],
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "D:/ProgramFiles/Arduino/hardware/tools/avr/bin/avr-gcc.exe",
+      "cStandard": "c11",
+      "cppStandard": "c++11",
+      "defines": [
+        "F_CPU=16000000L",
+        "ARDUINO=10813",
+        "ARDUINO_AVR_UNO",
+        "ARDUINO_ARCH_AVR"
+      ]
+    },
+    {
+      "name": "Arduino Nano",
+      "includePath": [
+        "D:/ProgramFiles/Arduino/hardware/arduino/avr/cores/arduino",
+        "D:/ProgramFiles/Arduino/hardware/arduino/avr/variants/eightanaloginputs",
+        "${workspaceFolder}/**"
+      ],
+      "forcedInclude": [
+        "D:/ProgramFiles/Arduino/hardware/arduino/avr/cores/arduino/Arduino.h"
+      ],
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "D:/ProgramFiles/Arduino/hardware/tools/avr/bin/avr-gcc.exe",
+      "cStandard": "c11",
+      "cppStandard": "c++11",
+      "defines": [
+        "F_CPU=16000000L",
+        "ARDUINO=10813",
+        "ARDUINO_AVR_NANO",
+        "ARDUINO_ARCH_AVR"
+      ]
+    }
+    // Add additional configurations here
+  ],
+  "version": 4
+}
