@@ -1,7 +1,6 @@
 {
-    "configuration": "cpu=atmega328old",
-    "board": "arduino:avr:nano",
-    "programmer": "avrispmkii",
-    "port": "COM3",
-    "sketch": "test\\Blink\\Blink.ino"
+  "sketch": "RFID-main - 1led\\RFID-main\\rfid_1LED\\rfid_1LED.ino",
+  "configuration": "cpu=atmega328old",
+  "board": "arduino:avr:nano",
+  "port": "COM3"
 }

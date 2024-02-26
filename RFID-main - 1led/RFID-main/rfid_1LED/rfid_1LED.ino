@@ -1,5 +1,6 @@
 #include <SPI.h>
 #include <MFRC522.h>
+#include <HardwareSerial.h>
 
 #define SS_PIN 10
 int buzzerPin = 3;
@@ -17,13 +18,13 @@ String uidString;
 void setup()
 {
   Serial.begin(9600);
-  SPI.begin();        // Init SPI bus
-  rfid.PCD_Init();     // Init MFRC522
+  SPI.begin();     // Init SPI bus
+  rfid.PCD_Init(); // Init MFRC522
   Serial.println(F("Stamford University Robotics Club"));
 
   pinMode(buzzerPin, OUTPUT);
   pinMode(lederrorPin, OUTPUT);
- // pinMode(ledPin, OUTPUT);
+  // pinMode(ledPin, OUTPUT);
 }
 
 void loop()
@@ -77,12 +78,11 @@ void readRFID()
     i++;
   }
 
-  digitalWrite(buzzerPin, HIGH);  // Turn on the buzzer
-  
+  digitalWrite(buzzerPin, HIGH); // Turn on the buzzer
+
   Serial.println("Buzzing");
-  delay(200);                     // Make a sound for 200 milliseconds
-  digitalWrite(buzzerPin, LOW);   // Turn off the buzzer
- 
+  delay(200);                   // Make a sound for 200 milliseconds
+  digitalWrite(buzzerPin, LOW); // Turn off the buzzer
 
   if (match)
   {
@@ -97,18 +97,17 @@ void readRFID()
   {
     Serial.println("\nUnknown Card");
     Serial.println("Buzzing as unknown card, red LED");
-int j = 0;
-  while (j < 6)
-  {
-    delay(200);                    
-    digitalWrite(buzzerPin, HIGH);  
-    digitalWrite(lederrorPin, HIGH);
-    delay(500);                     
-    digitalWrite(buzzerPin, LOW);   
-    digitalWrite(lederrorPin, LOW);
-    j++;
-  }
-    
+    int j = 0;
+    while (j < 6)
+    {
+      delay(200);
+      digitalWrite(buzzerPin, HIGH);
+      digitalWrite(lederrorPin, HIGH);
+      delay(500);
+      digitalWrite(buzzerPin, LOW);
+      digitalWrite(lederrorPin, LOW);
+      j++;
+    }
   }
 
   Serial.println("============================");
@@ -127,6 +126,3 @@ void printDec(byte *buffer, byte bufferSize)
     Serial.print(buffer[i], DEC);
   }
 }
-
-
-

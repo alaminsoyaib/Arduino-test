@@ -1,8 +1,12 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {}
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "arduino.useArduinoCli": false,
+    "arduino.additionalUrls": ["E:\\2\\Documents\\Arduino"],
+    "arduino.path": "D:\\ProgramFiles\\Arduino"
+  }
 }
