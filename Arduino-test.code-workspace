@@ -5,8 +5,9 @@
     }
   ],
   "settings": {
-    "arduino.useArduinoCli": false,
+    "arduino.useArduinoCli": true,
     "arduino.additionalUrls": ["E:\\2\\Documents\\Arduino"],
-    "arduino.path": "D:\\ProgramFiles\\Arduino"
+    "arduino.path": "",
+    "arduino.commandPath": ""
   }
 }
