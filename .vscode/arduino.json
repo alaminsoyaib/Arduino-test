@@ -1,5 +1,5 @@
 {
-    "sketch": "test\\BuzzTestDigital\\BuzzTestDigital.ino",
+    "sketch": "rfid_1LED\\rfid_1LED.ino",
     "configuration": "cpu=atmega328old",
     "board": "arduino:avr:nano",
     "port": "COM4"

@@ -3,7 +3,7 @@
 
 #define SS_PIN 10
 int buzzerPin = 3;
-int lederrorPin = 2;
+int LED = 2;
 // int ledPin = 4;
 #define RST_PIN 9
 
@@ -22,7 +22,7 @@ void setup()
   Serial.println(F("Stamford University Robotics Club"));
 
   pinMode(buzzerPin, OUTPUT);
-  pinMode(lederrorPin, OUTPUT);
+  pinMode(LED, OUTPUT);
   // pinMode(ledPin, OUTPUT);
 }
 
@@ -48,12 +48,15 @@ void readRFID()
       piccType != MFRC522::PICC_TYPE_MIFARE_4K)
   {
     Serial.println(F("Your tag is not of type MIFARE Classic."));
-    delay(200);
-    digitalWrite(buzzerPin, HIGH);
-    digitalWrite(lederrorPin, HIGH);
-    delay(3500);
-    digitalWrite(buzzerPin, LOW);
-    digitalWrite(lederrorPin, LOW);
+    for (int tempi = 0; tempi < 5; tempi++)
+    {
+      tone(buzzerPin, 2200, 500); // play 1000Hz tone for 500ms
+      digitalWrite(LED, HIGH);
+      delay(200);                 // wait for a second
+      tone(buzzerPin, 1800, 500); // play 2000Hz tone for 500ms
+      digitalWrite(LED, LOW);
+      delay(200); // wait for a second
+    }
     return;
   }
 
@@ -77,35 +80,42 @@ void readRFID()
     i++;
   }
 
-  digitalWrite(buzzerPin, HIGH); // Turn on the buzzer
-
-  Serial.println("Buzzing");
-  delay(200);                   // Make a sound for 200 milliseconds
-  digitalWrite(buzzerPin, LOW); // Turn off the buzzer
-
   if (match)
   {
     Serial.println("\n*** Unlocked ***");
     Serial.println("\nWelcome Al-Amin");
-    delay(200);
-    digitalWrite(lederrorPin, HIGH);
-    delay(2000);
-    digitalWrite(lederrorPin, LOW);
+    digitalWrite(LED, HIGH);
+    for (unsigned char i = 0; i < 80; i++)
+    {
+      digitalWrite(buzzerPin, HIGH);
+      delay(1); // wait for 1ms
+      digitalWrite(buzzerPin, LOW);
+      delay(1); // wait for 1ms
+    }
+    // output another frequency
+    for (unsigned char i = 0; i < 100; i++)
+    {
+      digitalWrite(buzzerPin, HIGH);
+      delay(2); // wait for 2ms
+      digitalWrite(buzzerPin, LOW);
+      delay(2); // wait for 2ms
+    }
+    delay(1000);
+    digitalWrite(LED, LOW);
   }
   else
   {
     Serial.println("\nUnknown Card");
     Serial.println("Buzzing as unknown card, red LED");
-    int j = 0;
-    while (j < 6)
+
+    for (int tempi = 0; tempi < 3; tempi++)
     {
-      delay(200);
-      digitalWrite(buzzerPin, HIGH);
-      digitalWrite(lederrorPin, HIGH);
-      delay(500);
-      digitalWrite(buzzerPin, LOW);
-      digitalWrite(lederrorPin, LOW);
-      j++;
+      digitalWrite(LED, HIGH);
+      tone(buzzerPin, 1000, 500); // play 1000Hz tone for 500ms
+      delay(200);                 // wait for a second
+      tone(buzzerPin, 2000, 500); // play 2000Hz tone for 500ms
+      digitalWrite(LED, LOW);
+      delay(200); // wait for a second
     }
   }
 

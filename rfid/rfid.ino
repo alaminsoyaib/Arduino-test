@@ -3,7 +3,7 @@
 
 #define SS_PIN 10
 int buzzerPin = 3;
-int lederrorPin = 2;
+int LED = 2;
 int ledPin = 4;
 #define RST_PIN 9
 
@@ -17,12 +17,12 @@ String uidString;
 void setup()
 {
   Serial.begin(9600);
-  SPI.begin();        // Init SPI bus
-  rfid.PCD_Init();     // Init MFRC522
+  SPI.begin();     // Init SPI bus
+  rfid.PCD_Init(); // Init MFRC522
   Serial.println(F("Stamford University Robotics Club"));
 
   pinMode(buzzerPin, OUTPUT);
-  pinMode(lederrorPin, OUTPUT);
+  pinMode(LED, OUTPUT);
   pinMode(ledPin, OUTPUT);
 }
 
@@ -71,12 +71,11 @@ void readRFID()
     i++;
   }
 
-  digitalWrite(buzzerPin, HIGH);  // Turn on the buzzer
-  
+  digitalWrite(buzzerPin, HIGH); // Turn on the buzzer
+
   Serial.println("Buzzing");
-  delay(200);                     // Make a sound for 200 milliseconds
-  digitalWrite(buzzerPin, LOW);   // Turn off the buzzer
- 
+  delay(200);                   // Make a sound for 200 milliseconds
+  digitalWrite(buzzerPin, LOW); // Turn off the buzzer
 
   if (match)
   {
@@ -90,13 +89,13 @@ void readRFID()
   else
   {
     Serial.println("\nUnknown Card");
-    delay(200);                     // Make a sound for 200 milliseconds
-    digitalWrite(buzzerPin, HIGH);  // Turn on the buzzer
-    digitalWrite(lederrorPin, HIGH);
+    delay(200);                    // Make a sound for 200 milliseconds
+    digitalWrite(buzzerPin, HIGH); // Turn on the buzzer
+    digitalWrite(LED, HIGH);
     Serial.println("Buzzing as unknown card, red LED");
-    delay(2000);                     // Wait for 200 milliseconds before repeating 
-    digitalWrite(buzzerPin, LOW);   // Turn off the buzzer
-    digitalWrite(lederrorPin, LOW);
+    delay(2000);                  // Wait for 200 milliseconds before repeating
+    digitalWrite(buzzerPin, LOW); // Turn off the buzzer
+    digitalWrite(LED, LOW);
   }
 
   Serial.println("============================");
