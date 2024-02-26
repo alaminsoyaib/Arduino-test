@@ -10,7 +10,7 @@ int lederrorPin = 2;
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 MFRC522::MIFARE_Key key;
 
-int code[] = {35, 183, 179, 14}; // This is the stored UID (Unlock Card)
+int code[] = {147, 237, 3, 23}; // This is the stored UID (Unlock Card)
 int codeRead = 0;
 String uidString;
 
