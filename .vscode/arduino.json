@@ -1,6 +1,7 @@
 {
-    "sketch": "rfid_1LED\\rfid_1LED.ino",
+    "sketch": "workshop_2\\workshop_2.ino",
     "configuration": "cpu=atmega328old",
     "board": "arduino:avr:nano",
-    "port": "COM4"
+    "port": "COM4",
+    "programmer": "avrispmkii"
 }
