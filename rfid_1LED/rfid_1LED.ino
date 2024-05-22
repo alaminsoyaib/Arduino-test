@@ -10,7 +10,7 @@ int LED = 2;
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 MFRC522::MIFARE_Key key;
 
-int code[] = {163, 60, 63, 23}; // This is the stored UID (Unlock Card)
+int code[] = {67, 109, 178, 14}; // This is the stored UID (Unlock Card)
 int codeRead = 0;
 String uidString;
 
