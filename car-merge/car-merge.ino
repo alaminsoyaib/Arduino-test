@@ -7,9 +7,10 @@
 #define RST_PIN 9 // RST
 MFRC522 rfid(SS_PIN, RST_PIN);
 MFRC522::MIFARE_Key key;
-int unlock[] = {67, 109, 178, 14}; // Stored UID (Unlock Card)
+int unlockCode[] = {67, 109, 178, 14}; // Stored UID (Unlock Card)
+int lockCode[] = {147, 237, 3, 23};    // Stored UID (Lock Card)
 int buzzerPin = 8;
-int LED = 2;
+int LED = A0; // Changed LED pin to A0
 
 // Bluetooth setup
 SoftwareSerial BT(6, 7); // TX, RX respectively
@@ -44,10 +45,7 @@ void loop()
     {
         readRFID();
     }
-    if (carUnlocked)
-    {
-        controlCar();
-    }
+    controlCar(); // Always call controlCar to read Bluetooth input
     delay(100);
 }
 
@@ -61,23 +59,12 @@ void readRFID()
     Serial.println("Scanned PICC's UID:");
     printDec(rfid.uid.uidByte, rfid.uid.size);
 
-    bool match = true;
-    for (int i = 0; i < rfid.uid.size; i++)
-    {
-        if (int(rfid.uid.uidByte[i]) != unlock[i])
-        {
-            match = false;
-            break;
-        }
-    }
-
-    if (match)
+    if (isCardMatch(rfid.uid.uidByte, unlockCode))
     {
         if (carUnlocked)
         {
-            Serial.println("\n*** Locked ***");
-            carUnlocked = false;
-            digitalWrite(LED, LOW);
+            Serial.println("\n*** Already Unlocked ***");
+            indicateAlreadyUnlocked();
         }
         else
         {
@@ -90,6 +77,21 @@ void readRFID()
             digitalWrite(LED, LOW);
         }
     }
+    else if (isCardMatch(rfid.uid.uidByte, lockCode))
+    {
+        if (carUnlocked)
+        {
+            Serial.println("\n*** Locked ***");
+            carUnlocked = false;
+            digitalWrite(LED, LOW);
+            indicateLock();
+        }
+        else
+        {
+            Serial.println("\n*** Already Locked ***");
+            indicateAlreadyLocked();
+        }
+    }
     else
     {
         Serial.println("\nUnknown Card");
@@ -98,6 +100,18 @@ void readRFID()
 
     rfid.PICC_HaltA();
     rfid.PCD_StopCrypto1();
+}
+
+bool isCardMatch(byte *card, int *code)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        if (int(card[i]) != code[i])
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 void indicateError()
@@ -131,6 +145,38 @@ void indicateSuccess()
     }
 }
 
+void indicateLock()
+{
+    for (unsigned char i = 0; i < 80; i++)
+    {
+        digitalWrite(buzzerPin, HIGH);
+        delay(2);
+        digitalWrite(buzzerPin, LOW);
+        delay(2);
+    }
+    for (unsigned char i = 0; i < 100; i++)
+    {
+        digitalWrite(buzzerPin, HIGH);
+        delay(1);
+        digitalWrite(buzzerPin, LOW);
+        delay(1);
+    }
+}
+
+void indicateAlreadyLocked()
+{
+    tone(buzzerPin, 500, 300);
+    delay(300);
+    tone(buzzerPin, 500, 300);
+}
+
+void indicateAlreadyUnlocked()
+{
+    tone(buzzerPin, 1000, 300);
+    delay(300);
+    tone(buzzerPin, 1000, 300);
+}
+
 void printDec(byte *buffer, byte bufferSize)
 {
     for (byte i = 0; i < bufferSize; i++)
@@ -143,11 +189,18 @@ void printDec(byte *buffer, byte bufferSize)
 
 void controlCar()
 {
-    while (BT.available())
+    if (BT.available())
     {
         delay(10);
         char c = BT.read();
         readdata = c;
+        if (!carUnlocked)
+        {
+            Serial.print("Received data while locked: ");
+            Serial.println(readdata);
+            readdata = "";
+            return;
+        }
     }
     if (readdata.length() > 0)
     {
