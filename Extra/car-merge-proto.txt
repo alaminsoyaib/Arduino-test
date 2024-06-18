@@ -1,3 +1,7 @@
+I have two separate projects, but my plan is to combine them. One is phone control, bluetooth, another one is RFIT checking. What I intend to do is after checking with the card, the RFID will give access to the card and or it will unlock the card. Then only will be the I will, I will be to control my card using my phone now. now merge the necessary code.
+added : 1. Rfid code, 2. Car code.
+
+1. RFID code: 
 #include <SPI.h>
 #include <MFRC522.h>
 
@@ -10,7 +14,7 @@ int LED = 2;
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 MFRC522::MIFARE_Key key;
 
-int unlock[] = {67, 109, 178, 14}; // This is the stored UID (Unlock Card)
+int code[] = {67, 109, 178, 14}; // This is the stored UID (Unlock Card)
 int codeRead = 0;
 String uidString;
 
@@ -70,9 +74,9 @@ void readRFID()
   while (i < rfid.uid.size)
   {
     Serial.println(int(rfid.uid.uidByte[i]));
-    Serial.println(int(unlock[i]));
+    Serial.println(int(code[i]));
 
-    if (!(int(rfid.uid.uidByte[i]) == int(unlock[i])))
+    if (!(int(rfid.uid.uidByte[i]) == int(code[i])))
     {
       match = false;
     }
@@ -135,3 +139,103 @@ void printDec(byte *buffer, byte bufferSize)
     Serial.print(buffer[i], DEC);
   }
 }
+
+
+2. Car code:
+
+#include <SoftwareSerial.h>
+SoftwareSerial BT(11, 12); // TX, RX respetively
+String readdata;
+
+#define Left_F 7
+#define Left_B 8
+#define Right_F 9
+#define Right_B 10
+
+void stop()
+{
+    digitalWrite(Left_F, LOW);
+    digitalWrite(Left_B, LOW);
+    digitalWrite(Right_F, LOW);
+    digitalWrite(Right_B, LOW);
+    Serial.println("Stopping\n");
+    delay(100);
+}
+
+void setup()
+{
+    BT.begin(9600);
+    Serial.begin(9600);
+    Serial.println("---Project is ready---\n");
+    pinMode(Left_F, OUTPUT);
+    pinMode(Left_B, OUTPUT);
+    pinMode(Right_F, OUTPUT);
+    pinMode(Right_B, OUTPUT);
+}
+//-----------------------------------------------------------------------//
+void loop()
+{
+    while (BT.available())
+    {                       // Check if there is an available byte to read
+        delay(10);          // Delay added to make thing stable
+        char c = BT.read(); // Conduct a serial read
+        // int servopo3 = BT.read();
+        readdata = c; // build the string- "forward", "reverse", "left" and "right"
+    }
+    if (readdata.length() > 0)
+    {
+        Serial.println(readdata);
+
+        if (readdata == "f")
+        {
+            digitalWrite(Left_F, HIGH);
+            digitalWrite(Left_B, LOW);
+            digitalWrite(Right_F, HIGH);
+            digitalWrite(Right_B, LOW);
+            Serial.println("Going Forward\n");
+            delay(1000);
+            stop();
+        }
+
+        else if (readdata == "b")
+        {
+            digitalWrite(Left_F, LOW);
+            digitalWrite(Left_B, HIGH);
+            digitalWrite(Right_F, LOW);
+            digitalWrite(Right_B, HIGH);
+            Serial.println("Going Backward\n");
+            delay(1000);
+            stop();
+        }
+
+        else if (readdata == "l")
+        {
+            digitalWrite(Left_F, LOW);
+            digitalWrite(Left_B, LOW);
+            digitalWrite(Right_F, HIGH);
+            digitalWrite(Right_B, LOW);
+            Serial.println("Going Left\n");
+            delay(500);
+            stop();
+        }
+
+        else if (readdata == "r")
+        {
+            digitalWrite(Left_F, HIGH);
+            digitalWrite(Left_B, LOW);
+            digitalWrite(Right_F, LOW);
+            digitalWrite(Right_B, LOW);
+            Serial.println("Going Right\n");
+            delay(500);
+            stop();
+        }
+
+        else if (readdata == "x")
+        {
+            stop();
+        }
+
+        readdata = "";
+        Serial.println("***Memory Cleared***\n");
+    }
+} // Reset the variable

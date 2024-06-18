@@ -1,7 +1,7 @@
 {
-    "sketch": "rfid_1LED\\rfid_1LED.ino",
+    "sketch": "car-merge\\car-merge.ino",
     "configuration": "cpu=atmega328old",
     "board": "arduino:avr:nano",
-    "port": "COM4",
+    "port": "COM3",
     "programmer": "avrispmkii"
 }

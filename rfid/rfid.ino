@@ -10,7 +10,7 @@ int ledPin = 4;
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 MFRC522::MIFARE_Key key;
 
-int code[] = {147, 237, 03, 23}; // This is the stored UID (Unlock Card)
+int unlock[] = {147, 237, 03, 23}; // This is the stored UID (Unlock Card)
 int codeRead = 0;
 String uidString;
 
@@ -61,9 +61,9 @@ void readRFID()
   while (i < rfid.uid.size)
   {
     Serial.println(int(rfid.uid.uidByte[i]));
-    Serial.println(int(code[i]));
+    Serial.println(int(unlock[i]));
 
-    if (!(int(rfid.uid.uidByte[i]) == int(code[i])))
+    if (!(int(rfid.uid.uidByte[i]) == int(unlock[i])))
     {
       match = false;
     }
