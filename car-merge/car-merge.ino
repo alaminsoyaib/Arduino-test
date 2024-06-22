@@ -10,7 +10,7 @@ MFRC522::MIFARE_Key key;
 int unlockCode[] = {67, 109, 178, 14}; // Stored UID (Unlock Card)
 int lockCode[] = {147, 237, 3, 23};    // Stored UID (Lock Card)
 int buzzerPin = 8;
-int LED = A0; // Changed LED pin to A0
+int LED = A0;
 
 // Bluetooth setup
 SoftwareSerial BT(6, 7); // TX, RX respectively
@@ -63,39 +63,28 @@ void readRFID()
     {
         if (carUnlocked)
         {
-            Serial.println("\n*** Already Unlocked ***");
             indicateAlreadyUnlocked();
         }
         else
         {
-            Serial.println("\n*** Unlocked ***");
-            Serial.println("\nWelcome Al-Amin");
-            carUnlocked = true;
-            digitalWrite(LED, HIGH);
             indicateSuccess();
-            delay(1000);
-            digitalWrite(LED, LOW);
         }
     }
     else if (isCardMatch(rfid.uid.uidByte, lockCode))
     {
         if (carUnlocked)
         {
-            Serial.println("\n*** Locked ***");
-            carUnlocked = false;
-            digitalWrite(LED, LOW);
             indicateLock();
         }
         else
         {
-            Serial.println("\n*** Already Locked ***");
             indicateAlreadyLocked();
         }
     }
     else
     {
         Serial.println("\nUnknown Card");
-        indicateError();
+        UnknownCard();
     }
 
     rfid.PICC_HaltA();
@@ -114,21 +103,30 @@ bool isCardMatch(byte *card, int *code)
     return true;
 }
 
-void indicateError()
+void UnknownCard()
 {
     for (int i = 0; i < 3; i++)
     {
         digitalWrite(LED, HIGH);
         tone(buzzerPin, 1000, 500);
+        digitalWrite(LED, LOW);
         delay(200);
+        digitalWrite(LED, HIGH);
         tone(buzzerPin, 2000, 500);
         digitalWrite(LED, LOW);
         delay(200);
+        digitalWrite(LED, HIGH);
+        delay(200);
+        digitalWrite(LED, LOW);
     }
 }
 
 void indicateSuccess()
 {
+    readdata = "";
+    Serial.println("\n*** Unlocked ***\n");
+    carUnlocked = true;
+    digitalWrite(LED, HIGH);
     for (unsigned char i = 0; i < 80; i++)
     {
         digitalWrite(buzzerPin, HIGH);
@@ -143,10 +141,16 @@ void indicateSuccess()
         digitalWrite(buzzerPin, LOW);
         delay(2);
     }
+    delay(200);
+    digitalWrite(LED, LOW);
 }
 
 void indicateLock()
 {
+    readdata = "";
+    Serial.println("\n*** Locked ***\n");
+    carUnlocked = false;
+    digitalWrite(LED, HIGH);
     for (unsigned char i = 0; i < 80; i++)
     {
         digitalWrite(buzzerPin, HIGH);
@@ -154,6 +158,10 @@ void indicateLock()
         digitalWrite(buzzerPin, LOW);
         delay(2);
     }
+    delay(50);
+    digitalWrite(LED, LOW);
+    delay(50);
+    digitalWrite(LED, HIGH);
     for (unsigned char i = 0; i < 100; i++)
     {
         digitalWrite(buzzerPin, HIGH);
@@ -161,18 +169,33 @@ void indicateLock()
         digitalWrite(buzzerPin, LOW);
         delay(1);
     }
+    delay(50);
+    digitalWrite(LED, LOW);
 }
 
 void indicateAlreadyLocked()
 {
+    readdata = "";
+    digitalWrite(LED, HIGH);
+    Serial.println("\n*** Already locked ***");
     tone(buzzerPin, 500, 300);
-    delay(300);
+    delay(100);
+    digitalWrite(LED, LOW);
+    delay(50);
+    digitalWrite(LED, HIGH);
     tone(buzzerPin, 500, 300);
+    delay(100);
+    digitalWrite(LED, LOW);
 }
 
 void indicateAlreadyUnlocked()
 {
+    readdata = "";
+    digitalWrite(LED, HIGH);
+    Serial.println("\n*** Already Unlocked ***");
     tone(buzzerPin, 1000, 300);
+    delay(500);
+    digitalWrite(LED, LOW);
 }
 
 void printDec(byte *buffer, byte bufferSize)
@@ -198,40 +221,26 @@ void controlCar()
             if (!carUnlocked)
             {
                 Serial.println("\n*** BT Unlocked ***");
-                carUnlocked = true;
-                digitalWrite(LED, HIGH);
                 indicateSuccess();
-                delay(1000);
-                digitalWrite(LED, LOW);
-                readdata = "";
                 return;
             }
             else
             {
-                Serial.println("\n*** Already Unlocked ***");
                 indicateAlreadyUnlocked();
-                readdata = "";
                 return;
             }
         }
-        if (readdata == "n") // unlock car
+        if (readdata == "n") // lock car
         {
             if (carUnlocked)
             {
                 Serial.println("\n*** BT locked ***");
-                carUnlocked = false;
-                digitalWrite(LED, HIGH);
                 indicateLock();
-                delay(1000);
-                digitalWrite(LED, LOW);
-                readdata = "";
                 return;
             }
             else
             {
-                Serial.println("\n*** Already locked ***");
                 indicateAlreadyLocked();
-                readdata = "";
                 return;
             }
         }
@@ -240,8 +249,8 @@ void controlCar()
         {
             Serial.print("locked: ");
             Serial.println(readdata);
-            tone(buzzerPin, 2100, 100); // play 3000Hz tone for 100ms
-            tone(buzzerPin, 500, 100);  // play 1000Hz tone for 100ms
+            tone(buzzerPin, 2100, 100); // play 2100Hz tone for 100ms
+            tone(buzzerPin, 500, 100);  // play 500Hz tone for 100ms
             readdata = "";
             return;
         }
@@ -253,8 +262,9 @@ void controlCar()
 
         if (readdata == "f") // front
         {
-            tone(buzzerPin, 1500, 100); // play 2100Hz tone for 100ms
-            tone(buzzerPin, 200, 100);  // play 500Hz tone for 100ms
+            digitalWrite(LED, HIGH);
+            tone(buzzerPin, 1500, 100); // play 1500Hz tone for 100ms
+            tone(buzzerPin, 200, 100);  // play 200Hz tone for 100ms
             digitalWrite(Left_F, HIGH);
             digitalWrite(Left_B, LOW);
             digitalWrite(Right_F, HIGH);
@@ -263,8 +273,9 @@ void controlCar()
         }
         else if (readdata == "b") // back
         {
-            tone(buzzerPin, 1500, 100); // play 2100Hz tone for 100ms
-            tone(buzzerPin, 200, 100);  // play 500Hz tone for 100ms
+            digitalWrite(LED, HIGH);
+            tone(buzzerPin, 1500, 100); // play 1500Hz tone for 100ms
+            tone(buzzerPin, 200, 100);  // play 200Hz tone for 100ms
             digitalWrite(Left_F, LOW);
             digitalWrite(Left_B, HIGH);
             digitalWrite(Right_F, LOW);
@@ -273,8 +284,9 @@ void controlCar()
         }
         else if (readdata == "l") // left
         {
-            tone(buzzerPin, 1500, 100); // play 2100Hz tone for 100ms
-            tone(buzzerPin, 200, 100);  // play 500Hz tone for 100ms
+            digitalWrite(LED, HIGH);
+            tone(buzzerPin, 1500, 100); // play 1500Hz tone for 100ms
+            tone(buzzerPin, 200, 100);  // play 200Hz tone for 100ms
             digitalWrite(Left_F, LOW);
             digitalWrite(Left_B, LOW);
             digitalWrite(Right_F, HIGH);
@@ -283,8 +295,9 @@ void controlCar()
         }
         else if (readdata == "r") // right
         {
-            tone(buzzerPin, 1500, 100); // play 2100Hz tone for 100ms
-            tone(buzzerPin, 200, 100);  // play 500Hz tone for 100ms
+            digitalWrite(LED, HIGH);
+            tone(buzzerPin, 1500, 100); // play 1500Hz tone for 100ms
+            tone(buzzerPin, 200, 100);  // play 200Hz tone for 100ms
             digitalWrite(Left_F, HIGH);
             digitalWrite(Left_B, LOW);
             digitalWrite(Right_F, LOW);
@@ -293,8 +306,9 @@ void controlCar()
         }
         else if (readdata == "x")
         {
-            tone(buzzerPin, 1500, 100); // play 3000Hz tone for 100ms
-            tone(buzzerPin, 200, 100);  // play 1000Hz tone for 100ms
+            digitalWrite(LED, LOW);
+            tone(buzzerPin, 1500, 100); // play 1500Hz tone for 100ms
+            tone(buzzerPin, 200, 100);  // play 200Hz tone for 100ms
             stop();
         }
 
