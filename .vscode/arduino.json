@@ -2,6 +2,6 @@
     "sketch": "car-merge\\car-merge.ino",
     "configuration": "cpu=atmega328old",
     "board": "arduino:avr:nano",
-    "port": "COM3",
+    "port": "COM4",
     "programmer": "avrispmkii"
 }

@@ -116,7 +116,7 @@ bool isCardMatch(byte *card, int *code)
 
 void indicateError()
 {
-    for (int tempi = 0; tempi < 3; tempi++)
+    for (int i = 0; i < 3; i++)
     {
         digitalWrite(LED, HIGH);
         tone(buzzerPin, 1000, 500);
@@ -173,8 +173,6 @@ void indicateAlreadyLocked()
 void indicateAlreadyUnlocked()
 {
     tone(buzzerPin, 1000, 300);
-    delay(300);
-    tone(buzzerPin, 1000, 300);
 }
 
 void printDec(byte *buffer, byte bufferSize)
@@ -194,65 +192,115 @@ void controlCar()
         delay(10);
         char c = BT.read();
         readdata = c;
-        if (!carUnlocked)
+
+        if (readdata == "m") // unlock car
         {
-            Serial.print("Received data while locked: ");
+            if (!carUnlocked)
+            {
+                Serial.println("\n*** BT Unlocked ***");
+                carUnlocked = true;
+                digitalWrite(LED, HIGH);
+                indicateSuccess();
+                delay(1000);
+                digitalWrite(LED, LOW);
+                readdata = "";
+                return;
+            }
+            else
+            {
+                Serial.println("\n*** Already Unlocked ***");
+                indicateAlreadyUnlocked();
+                readdata = "";
+                return;
+            }
+        }
+        if (readdata == "n") // unlock car
+        {
+            if (carUnlocked)
+            {
+                Serial.println("\n*** BT locked ***");
+                carUnlocked = false;
+                digitalWrite(LED, HIGH);
+                indicateLock();
+                delay(1000);
+                digitalWrite(LED, LOW);
+                readdata = "";
+                return;
+            }
+            else
+            {
+                Serial.println("\n*** Already locked ***");
+                indicateAlreadyLocked();
+                readdata = "";
+                return;
+            }
+        }
+
+        if (readdata.length() > 0 && !carUnlocked)
+        {
+            Serial.print("locked: ");
             Serial.println(readdata);
+            tone(buzzerPin, 2100, 100); // play 3000Hz tone for 100ms
+            tone(buzzerPin, 500, 100);  // play 1000Hz tone for 100ms
             readdata = "";
             return;
         }
     }
+
     if (readdata.length() > 0)
     {
-        Serial.println(readdata);
+        Serial.print(readdata);
 
-        if (readdata == "f")
+        if (readdata == "f") // front
         {
+            tone(buzzerPin, 1500, 100); // play 2100Hz tone for 100ms
+            tone(buzzerPin, 200, 100);  // play 500Hz tone for 100ms
             digitalWrite(Left_F, HIGH);
             digitalWrite(Left_B, LOW);
             digitalWrite(Right_F, HIGH);
             digitalWrite(Right_B, LOW);
-            Serial.println("Going Forward\n");
-            delay(1000);
-            stop();
+            Serial.print(" - Going Forward");
         }
-        else if (readdata == "b")
+        else if (readdata == "b") // back
         {
+            tone(buzzerPin, 1500, 100); // play 2100Hz tone for 100ms
+            tone(buzzerPin, 200, 100);  // play 500Hz tone for 100ms
             digitalWrite(Left_F, LOW);
             digitalWrite(Left_B, HIGH);
             digitalWrite(Right_F, LOW);
             digitalWrite(Right_B, HIGH);
-            Serial.println("Going Backward\n");
-            delay(1000);
-            stop();
+            Serial.print(" - Going Backward");
         }
-        else if (readdata == "l")
+        else if (readdata == "l") // left
         {
+            tone(buzzerPin, 1500, 100); // play 2100Hz tone for 100ms
+            tone(buzzerPin, 200, 100);  // play 500Hz tone for 100ms
             digitalWrite(Left_F, LOW);
             digitalWrite(Left_B, LOW);
             digitalWrite(Right_F, HIGH);
             digitalWrite(Right_B, LOW);
-            Serial.println("Going Left\n");
-            delay(500);
-            stop();
+            Serial.print(" - Going Left");
         }
-        else if (readdata == "r")
+        else if (readdata == "r") // right
         {
+            tone(buzzerPin, 1500, 100); // play 2100Hz tone for 100ms
+            tone(buzzerPin, 200, 100);  // play 500Hz tone for 100ms
             digitalWrite(Left_F, HIGH);
             digitalWrite(Left_B, LOW);
             digitalWrite(Right_F, LOW);
             digitalWrite(Right_B, LOW);
-            Serial.println("Going Right\n");
-            delay(500);
-            stop();
+            Serial.print(" - Going Right");
         }
         else if (readdata == "x")
         {
+            tone(buzzerPin, 1500, 100); // play 3000Hz tone for 100ms
+            tone(buzzerPin, 200, 100);  // play 1000Hz tone for 100ms
             stop();
         }
 
         readdata = "";
-        Serial.println("***Memory Cleared***\n");
+        Serial.println();
+        // Serial.println("***Memory Cleared***\n");
     }
 }
 
@@ -262,6 +310,6 @@ void stop()
     digitalWrite(Left_B, LOW);
     digitalWrite(Right_F, LOW);
     digitalWrite(Right_B, LOW);
-    Serial.println("Stopping\n");
-    delay(100);
+    Serial.println(" - Stopping");
+    // delay(100);
 }
