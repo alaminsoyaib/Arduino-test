@@ -1,11 +1,12 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
+// Buzzer issue on code
+
 #define SS_PIN 10
-int buzzerPin = 3;
-int LED = 2;
-int ledPin = 4;
 #define RST_PIN 9
+int buzzerPin = 8;
+int LED = A0;
 
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 MFRC522::MIFARE_Key key;
@@ -23,7 +24,6 @@ void setup()
 
   pinMode(buzzerPin, OUTPUT);
   pinMode(LED, OUTPUT);
-  pinMode(ledPin, OUTPUT);
 }
 
 void loop()
@@ -82,9 +82,9 @@ void readRFID()
     Serial.println("\n*** Unlocked ***");
     Serial.println("\nWelcome Al-Amin");
     delay(200);
-    digitalWrite(ledPin, HIGH);
+    digitalWrite(LED, HIGH);
     delay(2000);
-    digitalWrite(ledPin, LOW);
+    digitalWrite(LED, LOW);
   }
   else
   {
