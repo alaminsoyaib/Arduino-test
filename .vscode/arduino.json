@@ -1,6 +1,6 @@
 {
-    "sketch": "____Final____\\rfid\\rfid.ino",
-    "configuration": "cpu=atmega328",
+    "sketch": "Bluetooth-Car\\Bluetooth-Car.ino",
+    "configuration": "cpu=atmega328old",
     "board": "arduino:avr:nano",
     "port": "COM3",
     "programmer": "avrispmkii"
