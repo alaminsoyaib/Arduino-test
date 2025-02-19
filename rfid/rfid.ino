@@ -6,7 +6,7 @@
 #define SS_PIN 10
 #define RST_PIN 9
 int buzzerPin = 8;
-int LED = A0;
+int LED = 2;
 
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 MFRC522::MIFARE_Key key;

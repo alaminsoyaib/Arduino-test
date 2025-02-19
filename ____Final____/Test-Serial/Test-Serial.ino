@@ -7,5 +7,5 @@ void setup()
 void loop()
 {
   Serial.println("Hello from Arduino Nano!");
-  delay(10000);
+  delay(2500);
 }

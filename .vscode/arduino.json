@@ -1,7 +1,7 @@
 {
-    "sketch": "car-merge\\car-merge.ino",
+    "sketch": "Test-Serial\\Test-Serial.ino",
     "configuration": "cpu=atmega328old",
     "board": "arduino:avr:nano",
-    "port": "COM4",
+    "port": "COM3",
     "programmer": "avrispmkii"
 }

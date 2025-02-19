@@ -1,4 +1,4 @@
-int buzzerPin = 3; // Digital pin connected to your LED
+int buzzerPin = 2; // Digital pin connected to your LED
 
 void setup()
 {
