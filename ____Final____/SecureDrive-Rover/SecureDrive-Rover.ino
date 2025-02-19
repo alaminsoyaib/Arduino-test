@@ -9,8 +9,9 @@ MFRC522 rfid(SS_PIN, RST_PIN);
 MFRC522::MIFARE_Key key;
 int unlockCode[] = {67, 109, 178, 14}; // Stored UID for Unlocking
 int lockCode[] = {147, 237, 3, 23};    // Stored UID for Unlocking
-int buzzerPin = 8;
-int LED_ok = A0;
+#define buzzerPin 8
+#define LED_ok A0
+#define LED_error A1
 
 // Bluetooth setup
 SoftwareSerial BT(6, 7); // TX, RX
@@ -32,6 +33,7 @@ void setup()
     BT.begin(9600);
     pinMode(buzzerPin, OUTPUT);
     pinMode(LED_ok, OUTPUT);
+    pinMode(LED_error, OUTPUT);
     pinMode(Left_F, OUTPUT);
     pinMode(Left_B, OUTPUT);
     pinMode(Right_F, OUTPUT);
@@ -107,17 +109,17 @@ void UnknownCard()
 {
     for (int i = 0; i < 3; i++)
     {
-        digitalWrite(LED_ok, HIGH);
+        digitalWrite(LED_error, HIGH);
         tone(buzzerPin, 1000, 500);
-        digitalWrite(LED_ok, LOW);
+        digitalWrite(LED_error, LOW);
         delay(200);
-        digitalWrite(LED_ok, HIGH);
+        digitalWrite(LED_error, HIGH);
         tone(buzzerPin, 2000, 500);
-        digitalWrite(LED_ok, LOW);
+        digitalWrite(LED_error, LOW);
         delay(200);
-        digitalWrite(LED_ok, HIGH);
+        digitalWrite(LED_error, HIGH);
         delay(200);
-        digitalWrite(LED_ok, LOW);
+        digitalWrite(LED_error, LOW);
     }
 }
 
@@ -176,16 +178,16 @@ void indicateLock()
 void indicateAlreadyLocked()
 {
     readdata = "";
-    digitalWrite(LED_ok, HIGH);
+    digitalWrite(LED_error, HIGH);
     Serial.println("\n*** Already locked ***");
     tone(buzzerPin, 500, 300);
     delay(100);
-    digitalWrite(LED_ok, LOW);
+    digitalWrite(LED_error, LOW);
     delay(50);
-    digitalWrite(LED_ok, HIGH);
+    digitalWrite(LED_error, HIGH);
     tone(buzzerPin, 500, 300);
     delay(100);
-    digitalWrite(LED_ok, LOW);
+    digitalWrite(LED_error, LOW);
 }
 
 void indicateAlreadyUnlocked()
@@ -247,10 +249,12 @@ void controlCar()
 
         if (readdata.length() > 0 && !carUnlocked)
         {
+            digitalWrite(LED_error, HIGH);
             Serial.print("locked: ");
             Serial.println(readdata);
             tone(buzzerPin, 2100, 100); // play 2100Hz tone for 100ms
             tone(buzzerPin, 500, 100);  // play 500Hz tone for 100ms
+            digitalWrite(LED_error, LOW);
             readdata = "";
             return;
         }
