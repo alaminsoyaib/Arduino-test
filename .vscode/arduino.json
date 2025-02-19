@@ -1,5 +1,5 @@
 {
-    "sketch": "____Final____\\rfid_1LED\\rfid_1LED.ino",
+    "sketch": "____Final____\\rfid\\rfid.ino",
     "configuration": "cpu=atmega328",
     "board": "arduino:avr:nano",
     "port": "COM3",
