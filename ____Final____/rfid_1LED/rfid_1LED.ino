@@ -3,8 +3,11 @@
 
 #define SS_PIN 10
 #define RST_PIN 9
-int buzzerPin = 8;
-int LED = A0;
+#define buzzerPin 8
+// #define LED_ok A0
+// #define LED_error A1
+#define LED_ok 2
+#define LED_error 3
 
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 MFRC522::MIFARE_Key key;
@@ -21,7 +24,8 @@ void setup()
   Serial.println(F("Stamford University Robotics Club"));
 
   pinMode(buzzerPin, OUTPUT);
-  pinMode(LED, OUTPUT);
+  pinMode(LED_ok, OUTPUT);
+  pinMode(LED_error, OUTPUT);
 }
 
 void loop()
@@ -48,11 +52,11 @@ void readRFID()
     Serial.println(F("Your tag is not of type MIFARE Classic."));
     for (int tempi = 0; tempi < 5; tempi++)
     {
-      tone(buzzerPin, 2200, 500); // play 1000Hz tone for 500ms
-      digitalWrite(LED, HIGH);
+      tone(buzzerPin, 2200, 500); // play 2200Hz tone for 500ms
+      digitalWrite(LED_error, HIGH);
       delay(200);                 // wait for a second
-      tone(buzzerPin, 1800, 500); // play 2000Hz tone for 500ms
-      digitalWrite(LED, LOW);
+      tone(buzzerPin, 1800, 500); // play 1800Hz tone for 500ms
+      digitalWrite(LED_error, LOW);
       delay(200); // wait for a second
     }
     return;
@@ -82,7 +86,7 @@ void readRFID()
   {
     Serial.println("\n*** Unlocked ***");
     Serial.println("\nWelcome Al-Amin");
-    digitalWrite(LED, HIGH);
+    digitalWrite(LED_ok, HIGH);
     for (unsigned char i = 0; i < 80; i++)
     {
       digitalWrite(buzzerPin, HIGH);
@@ -99,7 +103,7 @@ void readRFID()
       delay(2); // wait for 2ms
     }
     delay(1000);
-    digitalWrite(LED, LOW);
+    digitalWrite(LED_ok, LOW);
   }
   else
   {
@@ -108,11 +112,11 @@ void readRFID()
 
     for (int tempi = 0; tempi < 3; tempi++)
     {
-      digitalWrite(LED, HIGH);
+      digitalWrite(LED_error, HIGH);
       tone(buzzerPin, 1000, 500); // play 1000Hz tone for 500ms
       delay(200);                 // wait for a second
       tone(buzzerPin, 2000, 500); // play 2000Hz tone for 500ms
-      digitalWrite(LED, LOW);
+      digitalWrite(LED_error, LOW);
       delay(200); // wait for a second
     }
   }

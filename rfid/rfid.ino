@@ -6,7 +6,7 @@
 #define SS_PIN 10
 #define RST_PIN 9
 int buzzerPin = 8;
-int LED = 2;
+int LED_ok = 2;
 
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 MFRC522::MIFARE_Key key;
@@ -23,7 +23,7 @@ void setup()
   Serial.println(F("Stamford University Robotics Club"));
 
   pinMode(buzzerPin, OUTPUT);
-  pinMode(LED, OUTPUT);
+  pinMode(LED_ok, OUTPUT);
 }
 
 void loop()
@@ -82,20 +82,20 @@ void readRFID()
     Serial.println("\n*** Unlocked ***");
     Serial.println("\nWelcome Al-Amin");
     delay(200);
-    digitalWrite(LED, HIGH);
+    digitalWrite(LED_ok, HIGH);
     delay(2000);
-    digitalWrite(LED, LOW);
+    digitalWrite(LED_ok, LOW);
   }
   else
   {
     Serial.println("\nUnknown Card");
     delay(200);                    // Make a sound for 200 milliseconds
     digitalWrite(buzzerPin, HIGH); // Turn on the buzzer
-    digitalWrite(LED, HIGH);
+    digitalWrite(LED_ok, HIGH);
     Serial.println("Buzzing as unknown card, red LED");
     delay(2000);                  // Wait for 200 milliseconds before repeating
     digitalWrite(buzzerPin, LOW); // Turn off the buzzer
-    digitalWrite(LED, LOW);
+    digitalWrite(LED_ok, LOW);
   }
 
   Serial.println("============================");
