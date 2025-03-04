@@ -318,7 +318,7 @@ void controlCar()
 
         readdata = "";
         Serial.println();
-        // Serial.println("***Memory Cleared***\n");
+        // Serial.println("***Memory - Cleared***\n");
     }
 }
 
